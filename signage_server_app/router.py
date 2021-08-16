@@ -4,6 +4,16 @@ import json
 import os
 
 curdir = os.path.dirname(os.path.realpath(__file__))
+# HTML Snippets
+snippets = dict()
+for file in os.listdir(os.path.join(curdir, "templates", "snippets")):
+    if file.endswith(".html"):
+        with open(os.path.join(curdir, "templates", "snippets", file), 'r') as f:
+            snippets[os.path.splitext(file)[0]] = Markup(f.read())
+
+
+### TEMPORARY ###
+no_login = True
 
 
 # --- HTML Pages ---
@@ -24,31 +34,31 @@ def display(display_name):
 @app.route("/admin/login")
 def admin_login():
     # Returns a login page
-    return render_template("admin_login.html")
+    return render_template("admin_login.html", **snippets)
 
 
 @app.route("/admin/displays")
 def admin_displays():
     # Returns a page with a table for adding, editing, or removing displays
-    if not session.get("logged_in"):
+    if not no_login and not session.get("logged_in"):
         return redirect(url_for("admin_login"))
-    return render_template("admin_displays.html")
+    return render_template("admin_displays.html", **snippets)
 
 
 @app.route("/admin/content")
 def admin_content():
     # Returns a page with a table for adding, editing, or removing content
-    if not session.get("logged_in"):
+    if not no_login and not session.get("logged_in"):
         return redirect(url_for("admin_login"))
-    return render_template("admin_content.html")
+    return render_template("admin_content.html", **snippets)
 
 
 @app.route("/admin/playlists")
 def admin_playlists():
     # Returns a page with a table for adding, editing, or removing playlists
-    if not session.get("logged_in"):
+    if not no_login and not session.get("logged_in"):
         return redirect(url_for("admin_login"))
-    return render_template("admin_playlists.html")
+    return render_template("admin_playlists.html", **snippets)
 
 
 # --- API Calls ---
