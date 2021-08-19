@@ -7,9 +7,26 @@
   <body>
     {{ navbar_main }}
     
-    <div class="container">
-      <h1>Hello!</h1>
+    <div class="container container-main">
+      <div class="row">
+        <div class="alert" id="alertBox"></div>
+      </div>
+      <div class="row">
+        <div class="col" style="text-align: center;">
+          <h3 class="page-title">Displays</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <table class="table" id="displaysTable"></table>
+      </div>
     </div>
+
+    {{ display_modal }}
+
+    {{ display_publish_modal }}
+
+    {{ are_you_sure_modal }}
 
     <!-- Custom JS -->
     <script src="/static/js/admin_displays.js" type="text/javascript"></script>

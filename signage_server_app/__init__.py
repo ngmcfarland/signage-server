@@ -1,4 +1,3 @@
-from tinydb import TinyDB
 from pathlib import Path
 from flask import Flask
 import os
@@ -16,7 +15,6 @@ if not os.path.exists(db_file):
     # Create empty DB file if it doesn't already exist
     with open(db_file, 'w'):
         pass
-db = TinyDB(db_file)
 
 # Import the main router that handles the HTML pages
 import signage_server_app.router

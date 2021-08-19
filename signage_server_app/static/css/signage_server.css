@@ -1,3 +1,56 @@
 .navbar-custom {
     background-color: rgb(38, 70, 83);
 }
+
+.container-main {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.row-icon {
+    height: 16px;
+}
+
+td {
+  vertical-align: middle !important;
+}
+
+.btn-primary-custom {
+    background-color: #2A9D8F;
+    color: white;
+}
+
+.btn-secondary-custom {
+    background-color: #b4bbc2;
+    color: white;
+}
+
+.btn-danger-custom {
+    background-color: #E76F51;
+    color: white;
+}
+
+.alert {
+    width: 100%;
+    text-align: center;
+    display: none;
+}
+
+.alert-success-custom {
+    background-color: #2A9D8F;
+    color: white;
+}
+
+.alert-warning-custom {
+    background-color: #F4A261;
+    color: white;
+}
+
+.alert-danger-custom {
+    background-color: #E76F51;
+    color: white;
+}
+
+.page-title {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}

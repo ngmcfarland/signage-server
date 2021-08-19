@@ -25,10 +25,10 @@ def displays():
     return render_template("displays.html")
 
 
-@app.route("/displays/<display_name>")
-def display(display_name):
-    # Returns a specific display based on the provided display name
-    return render_template("display.html", display_name=display_name)
+@app.route("/displays/<display_id>")
+def display(display_id):
+    # Returns a specific display based on the provided display ID
+    return render_template("display.html", display_id=display_id)
 
 
 @app.route("/admin/login")

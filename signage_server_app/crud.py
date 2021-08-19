@@ -1,6 +1,7 @@
-from signage_server_app import app, db
+from signage_server_app import app
 from flask import request
-import json
+from tinydb import TinyDB
+import yaml
 import os
 
 
@@ -9,8 +10,11 @@ curdir = os.path.dirname(os.path.realpath(__file__))
 # Only listen to these endpoints
 endpoints = ["displays", "content", "playlists"]
 # Load item templates to use when checking for valid items
-with open(os.path.join(curdir, "data", "item_templates.json"), 'r') as f:
-    item_templates = json.loads(f.read())
+with open(os.path.join(curdir, "data", "item_templates.yaml"), 'r') as f:
+    item_templates = yaml.load(f.read(), Loader=yaml.SafeLoader)
+
+# Open the database
+db = TinyDB(os.path.join(curdir, "data", "db.json"))
 
 
 @app.route("/api/<endpoint>", methods=["GET", "POST"])
@@ -33,7 +37,7 @@ def handle_endpoint(endpoint, item_id=None):
             else:
                 results = list()
                 # Get all items from table
-                for row in table:
+                for row in table.all():
                     temp = row.copy()
                     # Add ID to each item
                     temp['id'] = row.doc_id
@@ -42,7 +46,7 @@ def handle_endpoint(endpoint, item_id=None):
         elif request.method == "POST":
             # Get the data of the request
             data = request.json
-            if valid_item(item=data):
+            if valid_item(item=data, template=item_templates[endpoint]):
                 # Insert data into table and get new item ID back
                 item_id = table.insert(data)
                 # Add item ID to response data
@@ -53,7 +57,7 @@ def handle_endpoint(endpoint, item_id=None):
         elif request.method == "PUT":
             # Get the data of the request
             data = request.json
-            if valid_item(item=data):
+            if valid_item(item=data, template=item_templates[endpoint]):
                 # Make sure 'id' is not in the item before updating in the table
                 temp = data.copy()
                 try:
@@ -81,6 +85,26 @@ def handle_endpoint(endpoint, item_id=None):
         return dict(status="FAILED", message=f"Invalid endpoint: {endpoint}"), 404
 
 
-def valid_item(item):
-    # Check if item is legit here    
-    return True
+def valid_item(item, template):
+    # Check if item is legit using a template recursively
+    item_valid = True
+    if item is None:
+        return True
+    elif isinstance(template, dict):
+        if not isinstance(item, dict):
+            return False
+        for key in template:
+            try:
+                item_valid = valid_item(item=item[key], template=template[key])
+            except KeyError:
+                item_valid = False
+            if not item_valid:
+                break
+    elif isinstance(template, list):
+        if not isinstance(item, list):
+            return False
+        if len(item) > 0:
+            item_valid = valid_item(item=item[0], template=template[0])
+    else:
+        item_valid = isinstance(item, type(template))
+    return item_valid

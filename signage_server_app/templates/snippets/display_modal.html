@@ -1,0 +1,46 @@
+<!-- Display Modal -->
+<div class="modal fade" id="displayModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Display Details</h4>
+        <button type="button" class="close" data-dismiss="modal" id="displayModalX">&times;</button>
+      </div>
+      
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="container">        
+          <div class="row" style="margin-bottom: 30px;">
+            <div class="col-sm-12">
+              <label for="displayName" class="control-label">Name: </label>
+              <input type="text" id="displayName" class="form-control">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-12" style="text-align: center;">
+              <label class="form-check-label">
+                <input type="checkbox" class="form-check-input" id="displayActive">Active
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8" style="text-align: right;">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" id="displayModalClose">Close</button>
+              <button type="button" class="btn btn-primary" data-dismiss="modal" id="displayModalSave" disabled="true">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+displays:
+  name: str
+  active: true
+  showing: {}
+content:
+  name: str
+  active: true
+  type: str
+  size: 0
+  resolution: str
+  duration: 0
+  file: str
+playlists:
+  name: str
+  active: true
+  type: str
+  tracks:
+    - seq: 0
+      id: 0
+      duration: 0
