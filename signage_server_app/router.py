@@ -11,6 +11,9 @@ for file in os.listdir(os.path.join(curdir, "templates", "snippets")):
         with open(os.path.join(curdir, "templates", "snippets", file), 'r') as f:
             snippets[os.path.splitext(file)[0]] = Markup(f.read())
 
+# Only listen to these endpoints
+endpoints = ["displays", "content", "playlists"]
+
 
 ### TEMPORARY ###
 no_login = True
@@ -19,46 +22,38 @@ no_login = True
 # --- HTML Pages ---
 
 @app.route("/")
-@app.route("/displays")
+@app.route("/displays", methods=["GET"])
 def displays():
     # Returns a page showing all active displays
     return render_template("displays.html")
 
 
-@app.route("/displays/<display_id>")
-def display(display_id):
-    # Returns a specific display based on the provided display ID
-    return render_template("display.html", display_id=display_id)
+@app.route("/<endpoint>/<int:item_id>", methods=["GET"])
+def preview(endpoint, item_id):
+    # Returns a preview of an item based on the ID and the endpoint
+    if endpoint in endpoints:
+        endpoint = endpoint[:-1] if endpoint[-1] == "s" else endpoint
+        return render_template(f"{endpoint}.html", item_id=item_id, **snippets)
+    else:
+        return "Page not found", 404
 
 
-@app.route("/admin/login")
+@app.route("/admin/login", methods=["GET"])
 def admin_login():
     # Returns a login page
     return render_template("admin_login.html", **snippets)
 
 
-@app.route("/admin/displays")
-def admin_displays():
-    # Returns a page with a table for adding, editing, or removing displays
+@app.route("/admin", methods=["GET"])
+@app.route("/admin/<endpoint>", methods=["GET"])
+def admin(endpoint="displays"):
+    # Returns an admin page for the appropriate endpoint
     if not no_login and not session.get("logged_in"):
         return redirect(url_for("admin_login"))
-    return render_template("admin_displays.html", **snippets)
-
-
-@app.route("/admin/content")
-def admin_content():
-    # Returns a page with a table for adding, editing, or removing content
-    if not no_login and not session.get("logged_in"):
-        return redirect(url_for("admin_login"))
-    return render_template("admin_content.html", **snippets)
-
-
-@app.route("/admin/playlists")
-def admin_playlists():
-    # Returns a page with a table for adding, editing, or removing playlists
-    if not no_login and not session.get("logged_in"):
-        return redirect(url_for("admin_login"))
-    return render_template("admin_playlists.html", **snippets)
+    elif endpoint in endpoints:
+        return render_template(f"admin_{endpoint}.html", **snippets)
+    else:
+        return "Page not found", 404
 
 
 # --- API Calls ---

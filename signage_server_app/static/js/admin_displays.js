@@ -30,7 +30,7 @@ var substringMatcher = function(objs) {
 };
 
 // Code for managing the alert message at the top of the page
-function setAlertMessage(message, alertType) {
+function setAlertMessage(message, alertType, autoHide=true) {
   $('#alertBox').removeClass("alert-warning-custom");
   $('#alertBox').removeClass("alert-success-custom");
   $('#alertBox').removeClass("alert-danger-custom");
@@ -50,7 +50,9 @@ function setAlertMessage(message, alertType) {
       break;
   }
   $('#alertBox').slideDown("fast");
-  setTimeout(function(){$('#alertBox').slideUp("slow")}, 5000);
+  if (autoHide) {
+    setTimeout(function(){$('#alertBox').slideUp("slow")}, 5000);
+  }
 }
 
 // Formats the buttons for each row in the table
@@ -86,50 +88,47 @@ function getTable(refresh) {
       $('#displaysTable').DataTable().destroy();
     }
     var table = $("#displaysTable").DataTable({
-      "data": response.items,
-      "rowId": "id",
-      //"dom": 'Bfrtip',
-      "buttons": [
+      data: response.items,
+      rowId: "id",
+      buttons: [
         {
-          "text": "+ Add Display",
-          "className": "btn-primary-custom",
-          "action": function ( e, dt, node, config ) {
+          text: "+ Add Display",
+          className: "btn-primary-custom",
+          action: function ( e, dt, node, config ) {
             $('#displayActive').prop("checked", true); // New displays should be active by default
             $('#displayModal').modal("show");
             editDisplayId = null; // make sure this is null for a new display
           }
         }
       ],
-      "columns": [
+      columns: [
         {
-          "title": "ID",
-          "data": "id",
-          "visible": false
+          title: "ID",
+          data: "id",
+          visible: false
         },
         {
-          "title": "Name",
-          "data": "name",
-          "responsivePriority": 1
+          title: "Name",
+          data: "name",
+          responsivePriority: 1
         },
         {
-          "title": "Active",
-          "data": "active",
-          "responsivePriority": 3,
-          "render": function(data) {
+          title: "Active",
+          data: "active",
+          responsivePriority: 3,
+          render: function(data) {
             if (data) {
-              //return '<span style="padding-left: 20px; color: #2A9D8F;"><i class="fas fa-check-circle"></i></span>';
               return '<img src="/static/icons/check.svg" alt="True" class="row-icon" style="padding-left: 20px;">';
             } else {
-              //return '<span style="padding-left: 20px; color: #E76F51;"><i class="fas fa-times-circle"></i></span>';
               return '<img src="/static/icons/times.svg" alt="True" class="row-icon" style="padding-left: 20px;">';
             }
           }
         },
         {
-          "title": "Currently Showing",
-          "data": "showing",
-          "responsivePriority": 4,
-          "render": function(data) {
+          title: "Currently Showing",
+          data: "showing",
+          responsivePriority: 5,
+          render: function(data) {
             if (data == null) {
               return "None";
             } else {
@@ -138,12 +137,24 @@ function getTable(refresh) {
           }
         },
         {
-          "title": "Options",
-          "data": "id",
-          "width": "170px",
-          "responsivePriority": 2,
-          "orderable": false,
-          "render": function(data) {
+          title: "Preview",
+          data: "showing",
+          orderable: false,
+          responsivePriority: 4,
+          render: function(data) {
+            return '<img src="' + data.thumb + '" alt="Thumbnail" class="thumbnail" data-type="viewLiveDisplay">';
+          },
+          createdCell: function (td, cellData, rowData, row, col) {
+            $(td).css('text-align', 'center');
+          }
+        },
+        {
+          title: "Options",
+          data: "id",
+          width: "170px",
+          responsivePriority: 2,
+          orderable: false,
+          render: function(data) {
             return formatButtons(data);
           },
           createdCell: function(td, cellData, rowData, row, col) {
@@ -152,11 +163,11 @@ function getTable(refresh) {
           }
         }
       ],
-      "scrollY": "50vh",
-      "scrollCollapse": true,
-      "paging": false,
-      "responsive": {
-        "details": false
+      scrollY: "50vh",
+      scrollCollapse: true,
+      paging: false,
+      responsive: {
+        details: false
       }
     });
     table.buttons().container().prependTo( $('#displaysTable_wrapper').find("div").first().find("div").first() );
@@ -340,18 +351,13 @@ $('#displayPublishModalSave').on('click', function(e) {
 
 function clearAreYouSureModal() {
   $("#areYouSureMessage").text("");
-  $("#areYouSureModalConfirm").removeClass("btn-danger-custom");
-  $("#areYouSureModalConfirm").removeClass("btn-primary");
   $("#areYouSureModalConfirm").text("");
-  $("#areYouSureModalConfirm").data("type", "");
   areYouSureItemId = null;
 }
 
 $('#displaysTable').on('click', '[data-type="deleteDisplay"]', function(e) {
   $("#areYouSureMessage").text("Do you want to delete this display? This cannot be undone.");
-  $("#areYouSureModalConfirm").addClass("btn-danger-custom");
   $("#areYouSureModalConfirm").text("Delete");
-  $("#areYouSureModalConfirm").data("type", "delete");
   areYouSureItemId = $(this).data('id');
 });
 

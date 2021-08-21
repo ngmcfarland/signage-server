@@ -16,6 +16,10 @@ if not os.path.exists(db_file):
     with open(db_file, 'w'):
         pass
 
+# Create content and thumbnail directories if they don't exist
+Path(os.path.join(curdir, "static", "content")).mkdir(parents=True, exist_ok=True)
+Path(os.path.join(curdir, "static", "thumbnails")).mkdir(parents=True, exist_ok=True)
+
 # Import the main router that handles the HTML pages
 import signage_server_app.router
 

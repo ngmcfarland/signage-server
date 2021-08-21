@@ -54,3 +54,9 @@ td {
 .page-title {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.thumbnail {
+    height: 60px;
+    border: 1px solid #CCCCCC;
+    cursor: pointer;
+}

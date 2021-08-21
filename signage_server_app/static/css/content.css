@@ -1,0 +1,24 @@
+body, html {
+  height: 100%;
+  margin: 0;
+}
+    
+.bg {
+/* Full height */
+  height: 100%;
+
+  background-color: #000000;
+    
+  /* Center and scale the content nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+video {
+  width: 100%;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

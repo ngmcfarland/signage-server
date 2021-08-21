@@ -4,12 +4,12 @@ displays:
   showing: {}
 content:
   name: str
-  active: true
   type: str
   size: 0
   resolution: str
   duration: 0
   file: str
+  thumb: str
 playlists:
   name: str
   active: true
