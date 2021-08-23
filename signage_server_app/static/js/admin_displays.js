@@ -142,7 +142,11 @@ function getTable(refresh) {
           orderable: false,
           responsivePriority: 4,
           render: function(data) {
-            return '<img src="' + data.thumb + '" alt="Thumbnail" class="thumbnail" data-type="viewLiveDisplay">';
+            if (data == null) {
+              return "None";
+            } else {
+              return '<img src="' + data.thumb + '" alt="Thumbnail" class="thumbnail" data-type="viewLiveDisplay">';
+            }
           },
           createdCell: function (td, cellData, rowData, row, col) {
             $(td).css('text-align', 'center');

@@ -1,0 +1,29 @@
+.container-main {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.card-large {
+    width: 100%;
+}
+
+.btn-primary-custom {
+    background-color: #2A9D8F;
+    color: white;
+    width: 60%;
+    height: 100px;
+}
+
+.button-row {
+    /*width: 80%;*/
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.page-title {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h5 {
+    line-height: 90px;
+}

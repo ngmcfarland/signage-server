@@ -25,7 +25,7 @@ no_login = True
 @app.route("/displays", methods=["GET"])
 def displays():
     # Returns a page showing all active displays
-    return render_template("displays.html")
+    return render_template("displays.html", **snippets)
 
 
 @app.route("/<endpoint>/<int:item_id>", methods=["GET"])

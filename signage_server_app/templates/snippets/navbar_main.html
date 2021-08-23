@@ -1,19 +1,30 @@
     <nav class="navbar navbar-expand-md navbar-custom navbar-dark">
-      <a class="navbar-brand" href="#">Signage Server</a>
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#"><img src="/static/icons/signage-server.svg" alt="Logo" class="navbar-logo">Signage Server</a>
+      </div>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="collapsibleNavbar">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/displays" data-page="displays">Displays</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/content" data-page="content">Content</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/playlists" data-page="playlists">Playlists</a>
-          </li>    
-        </ul>
-      </div>  
+        <div class="container-fluid">
+          <ul class="nav navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/displays" data-page="displays">Displays</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/content" data-page="content">Content</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/admin/playlists" data-page="playlists">Playlists</a>
+            </li>    
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/displays">
+                <img src="/static/icons/exit.svg" alt="Exit" height="25px">
+              </a>
+            </li>
+          </ul>
+        </div> 
+      </div> 
     </nav>
