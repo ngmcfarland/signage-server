@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {{ head }}
+    <link href="/static/css/signage_server.css" rel="stylesheet">
+    <title>Signage Server</title>
+  </head>
+  <body>
+
+    {{ navbar_minimal }}
+
+    <div class="container container-main">
+      <div class="row">
+        <div class="alert" id="alertBox"></div>
+      </div>
+      <div class="card bg-light">
+        <div class="card-body">
+          <div class="row">
+            <div class="col" style="text-align: center;">
+              <h3 class="page-title">Admin Login</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <form id="loginForm" action="/admin/login">
+                <div class="form-group">
+                  <label for="pwd">Password:</label>
+                  <input type="password" class="form-control" id="pwd" name="password">
+                </div>
+                <div style="text-align: right;">
+                  <button type="submit" class="btn btn-primary-custom" id="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom JS -->
+    <script type="text/javascript" src="/static/js/admin_login.js"></script>
+
+  </body>
+</html>

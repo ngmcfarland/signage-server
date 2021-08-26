@@ -197,7 +197,10 @@ function getTable(refresh) {
 // Get the content to use in the Typeahead during publish
 function getContent() {
   $.getJSON("/api/content", function(data) {
-    content = data.items;
+    content = content.concat(data.items);
+  });
+  $.getJSON("/api/playlists", function(data) {
+    content = content.concat(data.items);
   });
 }
 

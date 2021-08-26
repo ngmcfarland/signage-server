@@ -1,6 +1,7 @@
 from flask import request, render_template, flash, session, Markup, redirect, url_for
 from signage_server_app import app
 import json
+import yaml
 import os
 
 curdir = os.path.dirname(os.path.realpath(__file__))
@@ -13,10 +14,6 @@ for file in os.listdir(os.path.join(curdir, "templates", "snippets")):
 
 # Only listen to these endpoints
 endpoints = ["displays", "content", "playlists"]
-
-
-### TEMPORARY ###
-no_login = True
 
 
 # --- HTML Pages ---
@@ -38,17 +35,32 @@ def preview(endpoint, item_id):
         return "Page not found", 404
 
 
-@app.route("/admin/login", methods=["GET"])
+@app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
-    # Returns a login page
-    return render_template("admin_login.html", **snippets)
+    if request.method == "GET":
+        # Returns a login page
+        return render_template("admin_login.html", **snippets)
+    elif request.method == "POST":
+        # Check the password and allow user to proceed if correct
+        with open(os.path.join(curdir, "data", "credentials.yaml"), 'r') as f:
+            config = yaml.load(f.read())
+        if request.form['password'] == config['password']:
+            # Successful login
+            session['logged_in'] = True
+            endpoint = session.get("target_endpoint") if session.get("target_endpoint") else "displays"
+            return dict(status="SUCCESS", endpoint=f"/admin/{endpoint}")
+        else:
+            # Wrong password
+            return dict(status="FAILED", message="Invalid password.")
+
 
 
 @app.route("/admin", methods=["GET"])
 @app.route("/admin/<endpoint>", methods=["GET"])
 def admin(endpoint="displays"):
     # Returns an admin page for the appropriate endpoint
-    if not no_login and not session.get("logged_in"):
+    if not session.get("logged_in"):
+        session['target_endpoint'] = endpoint
         return redirect(url_for("admin_login"))
     elif endpoint in endpoints:
         return render_template(f"admin_{endpoint}.html", **snippets)

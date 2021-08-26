@@ -86,6 +86,9 @@ def handle_endpoint(endpoint, item_id=None, tries=1):
                     # Update the item in the table
                     try:
                         _ = table.update(temp, doc_ids=[item_id])
+                        # If this was a content item or playlist, then referential data needs to be handled
+                        if endpoint in ("content", "playlists"):
+                            handle_referential_data(item_id=item_id, table_name=endpoint, action="update")
                         return dict(status="SUCCESS", item=data)
                     except KeyError:
                         return dict(status="FAILED", message=f"Item ID {item_id} not found in table '{endpoint}'"), 403
@@ -103,6 +106,9 @@ def handle_endpoint(endpoint, item_id=None, tries=1):
                         except:
                             pass
                     _ = table.remove(doc_ids=[item_id])
+                    # If this was a content item or playlist, then referential data needs to be handled
+                    if endpoint in ("content", "playlists"):
+                        handle_referential_data(item_id=item_id, table_name=endpoint, action="delete")
                     return dict(status="SUCCESS")
                 except KeyError:
                     return dict(status="FAILED", message=f"Item ID {item_id} not found in table '{endpoint}'"), 403
@@ -141,6 +147,67 @@ def valid_item(item, template):
     else:
         item_valid = isinstance(item, type(template))
     return item_valid
+
+
+def handle_referential_data(item_id, table_name, action="update"):
+    # Playlists hold references to content, and displays hold references content or playlists
+    # For an updated content item or playlist, go through and update any references
+    try:
+        table = db.table(table_name)
+        if action == "update":
+            new_item = table.get(doc_id=item_id)
+            new_item['id'] = item_id
+        else:
+            # It was deleted
+            new_item = None
+        if table_name == "playlists":
+            # Check to see if any displays are showing this playlist and update/delete if necessary
+            displays_table = db.table("displays")
+            displays_to_be_updated = list()
+            for display in displays_table:
+                if display['showing'] is not None and display['showing']['type'] == "playlist" and display['showing']['id'] == item_id:
+                    displays_to_be_updated.append(display.doc_id)
+            if len(displays_to_be_updated) > 0:
+                if action == "update":
+                    _ = displays_table.update(dict(showing=new_item), doc_ids=displays_to_be_updated)
+                elif action == "delete":
+                    _ = displays_table.update(dict(showing=None), doc_ids=displays_to_be_updated)
+        elif table_name == "content":
+            # Check to see if any displays are showing this content and update/delete if necessary
+            displays_table = db.table("displays")
+            displays_to_be_updated = list()
+            for display in displays_table:
+                if display['showing'] is not None and display['showing']['type'] in ("image", "video") and display['showing']['id'] == item_id:
+                    displays_to_be_updated.append(display.doc_id)
+            if len(displays_to_be_updated) > 0:
+                if action == "update":
+                    _ = displays_table.update(dict(showing=new_item), doc_ids=displays_to_be_updated)
+                elif action == "delete":
+                    _ = displays_table.update(dict(showing=None), doc_ids=displays_to_be_updated)
+            # Check to see if any playlists are showing this content and update/delete if necessary
+            playlists_table = db.table("playlists")
+            updated_playlists = list()
+            for playlist in playlists_table:
+                tracks_to_be_updated = list()
+                for i,track in enumerate(playlist['tracks']):
+                    if track['track']['id'] == item_id:
+                        tracks_to_be_updated.append(i)
+                if len(tracks_to_be_updated) > 0:
+                    for j in sorted(tracks_to_be_updated, reverse=True):
+                        if action == "update":
+                            playlist['tracks'][j]['track'] = new_item
+                            if new_item['type'] == "video":
+                                playlist['tracks'][j]['duration'] = new_item['duration']
+                        elif action == "delete":
+                            _ = playlist['tracks'].pop(j)
+                    _ = playlists_table.update(playlist, doc_ids=[playlist.doc_id])
+                    updated_playlists.append(playlist.doc_id)
+            # If any playlists were updated, call this function again so that displays can be checked again
+            for playlist_id in updated_playlists:
+                handle_referential_data(item_id=playlist_id, table_name="playlists", action="update")
+    except Exception as e:
+        print(f"ERROR: {e}")
+
 
 
 def allowed_file(filename):
