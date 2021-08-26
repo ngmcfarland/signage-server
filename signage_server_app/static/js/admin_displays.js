@@ -144,6 +144,21 @@ function getTable(refresh) {
           render: function(data) {
             if (data == null) {
               return "None";
+            } else if (data.type == "playlist") {
+              data.tracks.sort(function(a, b) { return a.seq - b.seq });
+              var html = '<div class="container" style="width: 107px;"><div class="row" style="background-color: #000000">';
+              for ( var i=0; i<4; i++ ) {
+                if ( i == 2 ){
+                  html += '</div><div class="row" style="background-color: #000000">';
+                }
+                if ( i < data.tracks.length) {
+                  html += '<div class="col playlist-thumb-div"><img src="' + data.tracks[i].track.thumb + '" alt="Thumbnail" class="playlist-thumb" data-type="previewPlaylist"></div>';
+                } else {
+                  html += '<div class="col playlist-thumb-div"><img src="/static/black.png" alt="Thumbnail" class="playlist-thumb" data-type="previewPlaylist"></div>';
+                }
+              }
+              html += '</div></div>';
+              return html;
             } else {
               return '<img src="' + data.thumb + '" alt="Thumbnail" class="thumbnail" data-type="viewLiveDisplay">';
             }

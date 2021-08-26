@@ -111,8 +111,8 @@ function getTable(refresh) {
           visible: false
         },
         {
-          title: 'Preview',
-          data: 'thumb',
+          title: "Preview",
+          data: "thumb",
           orderable: false,
           responsivePriority: 3,
           render: function(data) {
@@ -387,7 +387,6 @@ $('#contentPublishModalSave').on('click', function(e) {
         setAlertMessage("<strong>Error!</strong> Could not update content on display.", "error");
       }
       clearPublishContentModal();
-      getTable(true);
     }
   });
 });

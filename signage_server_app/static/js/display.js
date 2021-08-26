@@ -14,15 +14,16 @@ function updateDisplay() {
       currentContent = display.showing.id;
       if (display.showing.type == "playlist") {
         playlistContent = display.showing;
+        playlistContent.tracks.sort(function(a, b) { return a.seq - b.seq });
         var firstTrack = 0;
         var randomTracks = false;
-        if ('random' in display.showing && display.showing.random) {
+        if ('random' in playlistContent && playlistContent.random) {
           firstTrack = Math.floor(Math.random() * playlistContent.tracks.length);
           alreadyPlayed.push(firstTrack);
-          randomtracks = display.showing.random;
+          randomTracks = playlistContent.random;
         }
-        changeDisplay(playlistContent.tracks[firstTrack], playlistContent.id);
-        setTimeout(function(){nextTrack(firstTrack, randomtracks);}, playlistContent.tracks[firstTrack].duration);
+        changeDisplay(playlistContent.tracks[firstTrack].track, playlistContent.id);
+        setTimeout(function(){nextTrack(firstTrack, randomTracks);}, playlistContent.tracks[firstTrack].duration * 1000);
       } else {
         changeDisplay(display.showing, display.showing.id);
       }
@@ -49,8 +50,8 @@ function nextTrack(currentIndex, random) {
   } else if (currentIndex != (playlistContent.tracks.length - 1)) {
     nextIndex = currentIndex + 1;
   }
-  changeDisplay(playlistContent.tracks[nextIndex], playlistContent.id);
-  setTimeout(function(){nextTrack(nextIndex, random);}, playlistContent.tracks[nextIndex].duration);
+  changeDisplay(playlistContent.tracks[nextIndex].track, playlistContent.id);
+  setTimeout(function(){nextTrack(nextIndex, random);}, playlistContent.tracks[nextIndex].duration * 1000);
 };
 
 function changeDisplay(content, currentContentId) {

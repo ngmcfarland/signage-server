@@ -1,5 +1,12 @@
+@media (min-width: 768px) {
+  .modal-xl {
+    width: 90%;
+   max-width:1200px;
+  }
+}
+
 .navbar-custom {
-    background-color: rgb(38, 70, 83);
+    background-color: #264653;
 }
 
 .navbar-logo {
@@ -64,4 +71,22 @@ td {
     height: 60px;
     border: 1px solid #CCCCCC;
     cursor: pointer;
+}
+
+.playlist-thumb-div {
+    padding: 0px;
+    height: 30px;
+    width: 30px;
+    overflow: hidden;
+}
+
+.playlist-thumb {
+    height: 30px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+}
+
+.no-sort-dt > thead > tr > th[class*="sort"]:before,
+.no-sort-dt > thead > tr > th[class*="sort"]:after {
+    content: "" !important;
 }

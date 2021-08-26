@@ -12,9 +12,9 @@ content:
   thumb: str
 playlists:
   name: str
-  active: true
   type: str
+  random: true
   tracks:
     - seq: 0
-      id: 0
       duration: 0
+      track: {}
