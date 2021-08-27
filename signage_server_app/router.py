@@ -43,7 +43,7 @@ def admin_login():
     elif request.method == "POST":
         # Check the password and allow user to proceed if correct
         with open(os.path.join(curdir, "data", "credentials.yaml"), 'r') as f:
-            config = yaml.load(f.read())
+            config = yaml.load(f.read(), Loader=yaml.SafeLoader)
         if request.form['password'] == config['password']:
             # Successful login
             session['logged_in'] = True

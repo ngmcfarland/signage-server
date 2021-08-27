@@ -374,7 +374,9 @@ $('.typeahead').on('typeahead:selected', function(evt, item) {
 });
 
 $('#contentPublishModalSave').on('click', function(e) {
+  var now = new Date();
   publishDisplayItem['showing'] = content[publishContentId];
+  publishDisplayItem['updated'] = now.toISOString();
   $.ajax({
     type: "PUT",
     url: "/api/displays/" + publishDisplayItem['id'],

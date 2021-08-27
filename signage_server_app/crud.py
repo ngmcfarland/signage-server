@@ -2,6 +2,7 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.fx import resize
 from werkzeug.utils import secure_filename
 from signage_server_app import app
+from datetime import datetime
 from flask import request
 from tinydb import TinyDB
 from pathlib import Path
@@ -168,10 +169,11 @@ def handle_referential_data(item_id, table_name, action="update"):
                 if display['showing'] is not None and display['showing']['type'] == "playlist" and display['showing']['id'] == item_id:
                     displays_to_be_updated.append(display.doc_id)
             if len(displays_to_be_updated) > 0:
+                updated = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
                 if action == "update":
-                    _ = displays_table.update(dict(showing=new_item), doc_ids=displays_to_be_updated)
+                    _ = displays_table.update(dict(showing=new_item, updated=updated), doc_ids=displays_to_be_updated)
                 elif action == "delete":
-                    _ = displays_table.update(dict(showing=None), doc_ids=displays_to_be_updated)
+                    _ = displays_table.update(dict(showing=None, updated=updated), doc_ids=displays_to_be_updated)
         elif table_name == "content":
             # Check to see if any displays are showing this content and update/delete if necessary
             displays_table = db.table("displays")
@@ -180,10 +182,11 @@ def handle_referential_data(item_id, table_name, action="update"):
                 if display['showing'] is not None and display['showing']['type'] in ("image", "video") and display['showing']['id'] == item_id:
                     displays_to_be_updated.append(display.doc_id)
             if len(displays_to_be_updated) > 0:
+                updated = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
                 if action == "update":
-                    _ = displays_table.update(dict(showing=new_item), doc_ids=displays_to_be_updated)
+                    _ = displays_table.update(dict(showing=new_item, updated=updated), doc_ids=displays_to_be_updated)
                 elif action == "delete":
-                    _ = displays_table.update(dict(showing=None), doc_ids=displays_to_be_updated)
+                    _ = displays_table.update(dict(showing=None, updated=updated), doc_ids=displays_to_be_updated)
             # Check to see if any playlists are showing this content and update/delete if necessary
             playlists_table = db.table("playlists")
             updated_playlists = list()

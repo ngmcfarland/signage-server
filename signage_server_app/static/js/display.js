@@ -5,13 +5,16 @@ var contentRefresh = 1000;
 var errorRetry = 10000;
 var fadeTime = 2000;
 var displayId = null;
+var lastUpdated = new Date();
 
 function updateDisplay() {
   $.getJSON("/api/displays/" + displayId, function(data) {
     var display = data.item;
-    if (display.active && display.showing != null && currentContent != display.showing.id) {
+    var displayUpdated = new Date(display.updated);
+    if (display.active && display.showing != null && (currentContent != display.showing.id || displayUpdated > lastUpdated)) {
       console.log("Changing content to " + display.showing.type + ": " + display.showing.name);
       currentContent = display.showing.id;
+      lastUpdated = new Date();
       if (display.showing.type == "playlist") {
         playlistContent = display.showing;
         playlistContent.tracks.sort(function(a, b) { return a.seq - b.seq });

@@ -593,7 +593,9 @@ $('.publish-typeahead').on('typeahead:selected', function(evt, item) {
 });
 
 $('#playlistPublishModalSave').on('click', function(e) {
+  var now = new Date();
   publishDisplayItem['showing'] = playlists[publishPlaylistId];
+  publishDisplayItem['updated'] = now.toISOString();
   $.ajax({
     type: "PUT",
     url: "/api/displays/" + publishDisplayItem['id'],

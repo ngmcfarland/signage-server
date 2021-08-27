@@ -258,9 +258,11 @@ $('#displayName').on('input', function() {
 });
 
 $('#displayModalSave').on('click', function(e) {
+  var now = new Date();
   var display = {
     "name": $('#displayName').val(),
     "active": $('#displayActive').is(":checked"),
+    "updated": now.toISOString(),
     "showing": null
   }
   if (editDisplayId == null) {
@@ -350,7 +352,9 @@ $('.typeahead').on('typeahead:selected', function(evt, item) {
 });
 
 $('#displayPublishModalSave').on('click', function(e) {
+  var now = new Date();
   displays[publishDisplayId]['showing'] = publishContentItem;
+  displays[publishDisplayId]['updated'] = now.toISOString();
   $.ajax({
     type: "PUT",
     url: "/api/displays/" + publishDisplayId,

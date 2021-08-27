@@ -1,6 +1,7 @@
 displays:
   name: str
   active: true
+  updated: str
   showing: {}
 content:
   name: str
