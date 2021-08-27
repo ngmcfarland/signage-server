@@ -1,5 +1,7 @@
 # Signage Server
 
+![Preview](https://github.com/ngmcfarland/signage-server/blob/main/signage_server_app/docs/Signage_Server_Preview.png)
+
 Signage Server is a self-contained digital signage application written in Bootstrap and Python Flask. The application is designed to run on a local network and provides a clean interface for adding image and video content to be displayed on various displays remotely. 
 
 ## Features
@@ -10,6 +12,14 @@ Signage Server is a self-contained digital signage application written in Bootst
 * Supports the creation of content "playlists" for cycling through multiple images and/or videos
 * Manage multiple displays from a central webpage
 * Runs on Windows, MacOS, Linux, and Raspberry PI
+
+## Installation
+
+Clone the repo and then install the Python requirements.
+
+```
+$ pip install -r requirements.txt
+```
 
 ## Usage
 
