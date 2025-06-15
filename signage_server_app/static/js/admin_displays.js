@@ -235,12 +235,14 @@ $(document).ready(function() {
 function clearDisplayModal() {
   editDisplayId = null;
   $('#displayName').val("");
+  $('#displayFadeTime').val("");
   $('#displayActive').prop("checked", false);
 }
 
 $('#displaysTable').on('click', '[data-type="editDisplay"]', function(e) {
   editDisplayId = $(this).data('id');
   $('#displayName').val(displays[editDisplayId]['name']);
+  $('#displayFadeTime').val(displays[editDisplayId]['fade_time']);
   $('#displayActive').prop("checked", displays[editDisplayId]['active']);
   $('#displayModalSave').attr("disabled", false);
 });
@@ -262,6 +264,7 @@ $('#displayModalSave').on('click', function(e) {
   var display = {
     "name": $('#displayName').val(),
     "active": $('#displayActive').is(":checked"),
+    "fadeTime": parseInt($('#displayFadeTime').val()),
     "updated": now.toISOString(),
     "showing": null
   }

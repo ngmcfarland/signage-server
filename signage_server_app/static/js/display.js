@@ -3,7 +3,6 @@ var playlistContent = {};
 var alreadyPlayed = [];
 var contentRefresh = 1000;
 var errorRetry = 10000;
-var fadeTime = 2000;
 var displayId = null;
 var lastUpdated = new Date();
 
@@ -25,10 +24,10 @@ function updateDisplay() {
           alreadyPlayed.push(firstTrack);
           randomTracks = playlistContent.random;
         }
-        changeDisplay(playlistContent.tracks[firstTrack].track, playlistContent.id);
+        changeDisplay(playlistContent.tracks[firstTrack].track, playlistContent.id, display.fadeTime);
         setTimeout(function(){nextTrack(firstTrack, randomTracks);}, playlistContent.tracks[firstTrack].duration * 1000);
       } else {
-        changeDisplay(display.showing, display.showing.id);
+        changeDisplay(display.showing, display.showing.id, display.fadeTime);
       }
     }
     setTimeout(function(){updateDisplay();}, contentRefresh);
@@ -57,27 +56,26 @@ function nextTrack(currentIndex, random) {
   setTimeout(function(){nextTrack(nextIndex, random);}, playlistContent.tracks[nextIndex].duration * 1000);
 };
 
-function changeDisplay(content, currentContentId) {
+function changeDisplay(content, currentContentId, fadeTime) {
   if (currentContentId == currentContent) {
     console.log(content);
+    console.log("Fade Time: " + fadeTime);
+    // Check if there is an old video that will need to fade and be removed
+    var oldVideoId = null;
+    var videos = $('#display [id*="video_"]');
+    if (videos.length > 0) {
+      oldVideoId = videos[0].id;
+    };
+    // Check if there is an old YouTube video that will need to fade and be removed
+    var oldYoutubeId = null;
+    var youtubes = $('#display [id*="youtube_"]');
+    if (youtubes.length > 0) {
+      oldYoutubeId = youtubes[0].id;
+    };
     if (content.type == "image") {
-      // Check if there is an old video that will need to fade and be removed
-      var oldVideoId = null;
-      var videos = $('#display [id*="video_"]');
-      if (videos.length > 0) {
-        oldVideoId = videos[0].id;
-      };
       // Set new background content
       $('#display').css("background-image", "url(" + content.file + ")");
-      // If there was a video, fade it out and then remove it
-      if (oldVideoId) $('#'+oldVideoId).fadeTo(fadeTime, 0, function() {$('#'+oldVideoId).remove()});
     } else if (content.type == "video") {
-      // Check if there is an old video that will need to fade and be removed
-      var oldVideoId = null;
-      var videos = $('#display [id*="video_"]');
-      if (videos.length > 0) {
-        oldVideoId = videos[0].id;
-      };
       // Create HTML for new video and append it to display DIV
       var videoId = "video_" + content.file.split('/').pop().split('.')[0].replace(/\s/g, '');
       var videoHTML = '<video class="bg-video" id="' + videoId + '" style="opacity: 0;" loop autoplay>';
@@ -86,9 +84,21 @@ function changeDisplay(content, currentContentId) {
       // Fade in new video and remove any background images
       $('#'+videoId).fadeTo(fadeTime, 1);
       $('#display').css("background-image", "url(/static/black.png)");
-      // If there was a video before, fade it out and then remove it
-      if (oldVideoId) $('#'+oldVideoId).fadeTo(fadeTime, 0, function() {$('#'+oldVideoId).remove()});
+    } else if (content.type == "youtube") {
+      // Create HTML for embedded YouTube video and append it to display DIV
+      var youtubeId = "youtube_" + content.id;
+      var youtubeHTML = '<iframe id="' + youtubeId + '" title="YouTube video player" frameborder="0"';
+      youtubeHTML += 'height="100%" width="100%" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture"';
+      youtubeHTML += 'src="' + content.file + '?controls=0&autoplay=1" allowfullscreen></iframe>';
+      $('#display').append(youtubeHTML);
+      // Fade in new video and remove any background images
+      $('#'+youtubeId).fadeTo(fadeTime, 1);
+      $('#display').css("background-image", "url(/static/black.png)");
     }
+    // If there was a video before, fade it out and then remove it
+    if (oldVideoId) $('#'+oldVideoId).fadeTo(fadeTime, 0, function() {$('#'+oldVideoId).remove()});
+    // If there was a YouTube video before, fade it out and then remove it
+    if (oldYoutubeId) $('#'+oldYoutubeId).fadeTo(fadeTime, 0, function() {$('#'+oldYoutubeId).remove()});
   } else {
     console.log("Not doing anything.");
     // Don't do anything
@@ -97,7 +107,7 @@ function changeDisplay(content, currentContentId) {
 
 
 $(document).ready( function () {
-  $('#display').css("transition", "background-image " + Math.floor(fadeTime/1000) + "s ease-in-out");
+  $('#display').css("transition", "background-image " + Math.floor(2) + "s ease-in-out");
   $('#display').css("background-image", "url(/static/black.png)");
   displayId = $("#display").data('id');
   updateDisplay();

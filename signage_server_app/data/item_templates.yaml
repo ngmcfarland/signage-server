@@ -1,6 +1,7 @@
 displays:
   name: str
   active: true
+  fadeTime: 0
   updated: str
   showing: {}
 content:

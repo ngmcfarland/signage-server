@@ -1,5 +1,8 @@
-from flask import request, render_template, flash, session, Markup, redirect, url_for
+from flask import request, render_template, flash, session, redirect, url_for
 from signage_server_app import app
+from datetime import datetime
+from markupsafe import Markup
+from .crud import db
 import json
 import yaml
 import os
@@ -74,3 +77,54 @@ def admin(endpoint="displays"):
 def health():
     # Generic health check for testing purposes
     return json.dumps({'healthy': True})
+
+
+@app.route("/updateDisplayContent", methods=["POST"])
+def update_display_content():
+    """ Update the content showing on a display. Requires 'displayId' and 'contentId' in request body. """
+    data = request.json
+    if 'displayId' not in data or 'contentId' not in data:
+        return "Must include 'displayId' and 'contentId'!", 404
+    displays = db.table("displays")
+    content = db.table("content")
+    display_obj = displays.get(doc_id=data['displayId'])
+    content_obj = content.get(doc_id=data['contentId']) if data['contentId'] else None
+    if display_obj:
+        updated_obj = dict(showing=content_obj,
+                           fadeTime=data.get("fadeTime", display_obj['fadeTime']),
+                           updated=datetime.utcnow().isoformat()[:-3] + "Z")
+        return displays.update(updated_obj, doc_ids=[data['displayId']])
+    else:
+        return "Display not found!", 404
+
+
+@app.route("/playYoutubeVideo", methods=["POST"])
+def play_youtube_video():
+    """ Play a YouTube video on a display. """
+    data = request.json
+    if 'displayId' not in data or 'youtubeUrl' not in data or data['youtubeUrl'] == "":
+        return "Must include 'displayId' and 'youtubeUrl'!", 404
+    displays = db.table("displays")
+    display_obj = displays.get(doc_id=data['displayId'])
+    # Create a temporary content object with the YouTube info
+    if "watch" in data['youtubeUrl']:
+        # https://www.youtube.com/watch?v=pUaKcFI4BZY
+        video_id = data['youtubeUrl'].split("=")[-1]
+    else:
+        # https://www.youtube.com/embed/pUaKcFI4BZY?controls=0
+        video_id = data['youtubeUrl'].split("/")[-1].split("?")[0]
+    content_obj = {
+        "duration": 100,  # Currently only used by playlists, so this doesn't matter
+        "file": f"https://www.youtube.com/embed/{video_id}",
+        "name": f"Temporary YouTube Video ({video_id})",
+        "resolution": "unknown",
+        "size": 0,
+        "thumb": "/static/thumbnails/youtube.png",
+        "type": "youtube"
+    }
+    if display_obj:
+        updated_obj = dict(showing=content_obj,
+                           updated=datetime.utcnow().isoformat()[:-3] + "Z")
+        return displays.update(updated_obj, doc_ids=[data['displayId']])
+    else:
+        return "Display not found!", 404

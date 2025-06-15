@@ -1,8 +1,10 @@
 *.DS_Store
 *.log
 *__pycache__*
+*.python-version
 
 *db.json
+*.zip
 
 signage_server_app/static/content
 signage_server_app/static/thumbnails

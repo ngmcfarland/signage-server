@@ -1,6 +1,5 @@
-from moviepy.video.io.VideoFileClip import VideoFileClip
-from moviepy.video.fx import resize
 from werkzeug.utils import secure_filename
+from moviepy import VideoFileClip, vfx
 from signage_server_app import app
 from datetime import datetime
 from flask import request
@@ -242,7 +241,7 @@ def process_file(file_obj, old_file=None):
         # Create thumbnail
         info['thumb'] = f"/static/thumbnails/{file_name}"
         thumb_path = os.path.join(curdir, "static", "thumbnails", file_name)
-        thumbnail = image.resize((int((50/image.height)*image.width), 50), Image.ANTIALIAS)
+        thumbnail = image.resize((int((50/image.height)*image.width), 50), Image.Resampling.LANCZOS)
         thumbnail.save(thumb_path)
     elif file_obj.mimetype.split("/")[0] == "video":
         # Save the file
@@ -256,7 +255,7 @@ def process_file(file_obj, old_file=None):
             # Create thumbnail
             info['thumb'] = f"/static/thumbnails/{os.path.splitext(file_name)[0]}.png"
             thumb_path = os.path.join(curdir, "static", "thumbnails", f"{os.path.splitext(file_name)[0]}.png")
-            resize_clip = clip.fx(resize.resize, height=50)
+            resize_clip = clip.with_effects([vfx.Resize(height=50)])
             resize_clip.save_frame(thumb_path, t=min(2, info['duration']))
     else:
         # Only accept images or videos
